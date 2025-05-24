@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.os.CountDownTimer
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import kotlin.random.Random
@@ -14,6 +15,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var submitButton: Button
     private lateinit var scoreTextView: TextView
     private lateinit var timerTextView: TextView
+    private lateinit var jerboImageView: ImageView
     
     private var score = 0
     private var num1 = 0
@@ -35,6 +37,10 @@ class MainActivity : AppCompatActivity() {
         submitButton = findViewById(R.id.submitButton)
         scoreTextView = findViewById(R.id.scoreTextView)
         timerTextView = findViewById(R.id.timerTextView)
+        jerboImageView = findViewById(R.id.jerboImageView)
+
+        // Set initial jerbo state
+        updateJerboState()
 
         // Set up click listener
         submitButton.setOnClickListener {
@@ -44,6 +50,18 @@ class MainActivity : AppCompatActivity() {
         // Start the game
         generateNewQuestion()
         startTimer()
+    }
+
+    private fun updateJerboState() {
+        val state = when {
+            score >= 0 -> 1
+            score >= -2 -> 2
+            score >= -4 -> 3
+            score >= -6 -> 4
+            else -> 5
+        }
+        val imageResource = resources.getIdentifier("state_$state", "drawable", packageName)
+        jerboImageView.setImageResource(imageResource)
     }
 
     private fun generateNewQuestion() {
@@ -66,6 +84,7 @@ class MainActivity : AppCompatActivity() {
                 // Time's up - wrong answer
                 score--
                 updateScore()
+                updateJerboState()
                 nextQuestion()
             }
         }.start()
@@ -82,6 +101,7 @@ class MainActivity : AppCompatActivity() {
         }
         
         updateScore()
+        updateJerboState()
         nextQuestion()
     }
 
